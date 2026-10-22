@@ -1,0 +1,106 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <div class="eyebrow">Your selection</div>
+    <div class="section-head" style="margin-top: 7px;">
+      <div>
+        <h2>Shopping cart</h2>
+        <p>Review your items before checkout</p>
+      </div>
+      <a href="/products" class="textlink">← Continue shopping</a>
+    </div>
+
+    <% if (cart && cart.items && cart.items.length > 0) { %>
+      <div class="cart-layout">
+        <!-- Cart Items List -->
+        <div class="panel">
+          <h3>Cart items (<%= cart.totalCount %>)</h3>
+          
+          <% cart.items.forEach(item => { %>
+            <div class="cartrow">
+              <div class="miniart"><%= item.product.emoji %></div>
+              <div>
+                <strong>
+                  <a href="/products/<%= item.product._id %>" style="color: inherit;">
+                    <%= item.product.name %>
+                  </a>
+                </strong>
+                <div style="font-size: 12px; color: #777; margin-top: 2px;">
+                  <%= item.product.brand %> · <%= formatMoney(item.price) %> each
+                </div>
+                <div class="qty">
+                  <button type="button" onclick="updateCartQty('<%= item.product._id %>', -1)" title="Decrease quantity">−</button>
+                  <strong><%= item.quantity %></strong>
+                  <button type="button" onclick="updateCartQty('<%= item.product._id %>', 1)" title="Increase quantity">＋</button>
+                  <button type="button" class="danger" style="margin-left: 8px;" onclick="removeCartItem('<%= item.product._id %>')">
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <strong style="font-size: 16px;"><%= formatMoney(item.lineTotal) %></strong>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="panel" style="height: fit-content;">
+          <h3>Order summary</h3>
+          
+          <div class="summaryline">
+            <span>Subtotal</span>
+            <span><%= formatMoney(cart.subtotal) %></span>
+          </div>
+
+          <div class="summaryline">
+            <span>Delivery</span>
+            <span><%= cart.shippingFee === 0 ? '<strong style="color:var(--green)">FREE</strong>' : formatMoney(cart.shippingFee) %></span>
+          </div>
+
+          <div class="summaryline">
+            <span>Tax</span>
+            <span>Included</span>
+          </div>
+
+          <div class="summaryline total">
+            <span>Total</span>
+            <span style="color: var(--orange);"><%= formatMoney(cart.totalAmount) %></span>
+          </div>
+
+          <p style="font-size: 12px; color: #777; margin: 12px 0 16px;">
+            <% if (cart.subtotal >= 1999) { %>
+              🎉 You qualified for <strong>FREE Delivery</strong>!
+            <% } else { %>
+              Add <%= formatMoney(1999 - cart.subtotal) %> more to get <strong>FREE Delivery</strong>.
+            <% } %>
+          </p>
+
+          <a href="/orders/checkout" class="primary full" style="text-decoration:none;">
+            Proceed to checkout →
+          </a>
+
+          <a href="/products" class="secondary full" style="text-decoration:none; margin-top: 8px;">
+            Continue shopping
+          </a>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="panel empty">
+        <div class="emoji">🛒</div>
+        <h3>Your cart is waiting</h3>
+        <p>Add something you love from our curated catalog.</p>
+        <a href="/products" class="primary" style="margin-top: 14px; text-decoration: none; display: inline-flex;">
+          Browse products
+        </a>
+      </div>
+    <% } %>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

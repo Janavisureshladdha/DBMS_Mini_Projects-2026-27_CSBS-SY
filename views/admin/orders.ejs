@@ -1,0 +1,92 @@
+<%- include('../partials/head') %>
+<%- include('../partials/navbar') %>
+
+<div class="layout">
+  <%- include('../partials/sidebar') %>
+
+  <main class="main">
+    <%- include('../partials/messages') %>
+
+    <div class="eyebrow">Fulfillment & Sales</div>
+    <div class="section-head" style="margin-top: 7px;">
+      <div>
+        <h2>Manage Orders (<%= orders.length %>)</h2>
+        <p>Review customer orders and update shipping delivery states</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Fulfillment Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (orders.length > 0) { %>
+              <% orders.forEach(o => { %>
+                <tr>
+                  <td>
+                    <strong style="color: var(--orange);">
+                      <a href="/orders/<%= o._id %>" style="color: inherit;">
+                        <%= o.orderId %>
+                      </a>
+                    </strong>
+                  </td>
+                  <td>
+                    <strong><%= o.customer ? o.customer.name : o.shippingAddress.fullName %></strong>
+                    <div style="font-size: 11px; color: var(--muted);"><%= o.shippingAddress.email %></div>
+                  </td>
+                  <td><%= formatDate(o.createdAt) %></td>
+                  <td>
+                    <%= o.items.reduce((sum, item) => sum + item.quantity, 0) %> item(s)
+                  </td>
+                  <td><strong><%= formatMoney(o.totalAmount) %></strong></td>
+                  <td>
+                    <%= o.payment.paymentMode %>
+                    <span class="pill <%= o.payment.status === 'Paid' ? '' : 'pending' %>" style="display: block; width: fit-content; margin-top: 2px;">
+                      <%= o.payment.status %>
+                    </span>
+                  </td>
+                  <td>
+                    <form action="/admin/orders/status/<%= o._id %>" method="POST" style="display: flex; gap: 6px; align-items: center;">
+                      <select name="orderStatus" style="padding: 5px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                        <option value="Processing" <%= o.orderStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
+                        <option value="Shipped" <%= o.orderStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                        <option value="Delivered" <%= o.orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                        <option value="Cancelled" <%= o.orderStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                      </select>
+                      <button type="submit" class="secondary" style="padding: 5px 8px; font-size: 11px;" title="Update Status">Update</button>
+                    </form>
+                  </td>
+                  <td>
+                    <a href="/orders/<%= o._id %>" class="secondary" style="padding: 6px 12px; font-size: 12px; text-decoration:none;">
+                      View
+                    </a>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--muted); padding: 30px;">
+                  No customer orders found in the database.
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

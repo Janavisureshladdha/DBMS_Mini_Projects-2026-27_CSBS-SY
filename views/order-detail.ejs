@@ -1,0 +1,112 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <div class="eyebrow">Order summary</div>
+    <div class="section-head" style="margin-top: 7px;">
+      <div>
+        <h2>Order <%= order.orderId %></h2>
+        <p>Placed on <%= formatDate(order.createdAt) %></p>
+      </div>
+      <a href="/orders" class="textlink">← Back to all orders</a>
+    </div>
+
+    <div class="cart-layout">
+      <!-- Items & Timeline -->
+      <div class="panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 20px;">
+          <div>
+            <span style="font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: 750;">Order Status</span>
+            <div style="margin-top: 4px;">
+              <span class="pill <%= order.orderStatus === 'Processing' ? 'pending' : (order.orderStatus === 'Shipped' ? 'shipped' : (order.orderStatus === 'Delivered' ? '' : 'cancelled')) %>" style="font-size: 13px; padding: 6px 14px;">
+                <%= order.orderStatus %>
+              </span>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: 750;">Total Amount</span>
+            <div style="font-size: 20px; font-weight: 850; color: var(--ink);">
+              <%= formatMoney(order.totalAmount) %>
+            </div>
+          </div>
+        </div>
+
+        <h3>Ordered Items</h3>
+        <div style="display: flex; flex-direction: column;">
+          <% order.items.forEach(item => { %>
+            <div class="cartrow">
+              <div class="miniart"><%= item.emoji %></div>
+              <div>
+                <strong>
+                  <a href="/products/<%= item.product %>" style="color: inherit;">
+                    <%= item.name %>
+                  </a>
+                </strong>
+                <div style="font-size: 12px; color: #777; margin-top: 2px;">
+                  <%= item.brand %> · Color: <%= item.color %> · <%= formatMoney(item.price) %> each
+                </div>
+                <div style="font-size: 13px; color: var(--ink); margin-top: 4px;">
+                  Quantity: <strong><%= item.quantity %></strong>
+                </div>
+              </div>
+              <strong style="font-size: 16px;"><%= formatMoney(item.price * item.quantity) %></strong>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- Shipping & Payment Overview -->
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <div class="panel">
+          <h3 style="margin-bottom: 12px;">Delivery Details</h3>
+          <div style="font-size: 14px; line-height: 1.6; color: #444;">
+            <strong><%= order.shippingAddress.fullName %></strong><br>
+            <%= order.shippingAddress.street %><br>
+            <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.postalCode %><br>
+            <%= order.shippingAddress.country %><br>
+            <div style="margin-top: 8px; font-size: 13px; color: var(--muted);">
+              📞 <%= order.shippingAddress.phone %><br>
+              ✉ <%= order.shippingAddress.email %>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin-bottom: 12px;">Payment Details</h3>
+          <div class="summaryline">
+            <span>Payment Mode</span>
+            <strong><%= order.payment.paymentMode %></strong>
+          </div>
+          <div class="summaryline">
+            <span>Payment Status</span>
+            <span class="pill <%= order.payment.status === 'Paid' ? '' : 'pending' %>"><%= order.payment.status %></span>
+          </div>
+          <div class="summaryline">
+            <span>Transaction ID</span>
+            <code><%= order.payment.transactionId %></code>
+          </div>
+          <div class="summaryline">
+            <span>Subtotal</span>
+            <span><%= formatMoney(order.subtotal) %></span>
+          </div>
+          <div class="summaryline">
+            <span>Delivery</span>
+            <span><%= order.shippingFee === 0 ? 'FREE' : formatMoney(order.shippingFee) %></span>
+          </div>
+          <div class="summaryline total">
+            <span>Total</span>
+            <span style="color: var(--orange);"><%= formatMoney(order.totalAmount) %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

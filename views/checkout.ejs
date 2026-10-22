@@ -1,0 +1,191 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <div class="eyebrow">Final Step</div>
+    <div class="section-head" style="margin-top: 7px;">
+      <div>
+        <h2>Checkout & Delivery</h2>
+        <p>Complete your order information</p>
+      </div>
+      <a href="/cart" class="textlink">← Back to cart</a>
+    </div>
+
+    <form action="/orders/place" method="POST">
+      <div class="cart-layout">
+        <!-- Shipping Details Form -->
+        <div class="panel">
+          <h3>1. Delivery Address</h3>
+          
+          <div class="two-col">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input 
+                type="text" 
+                name="fullName" 
+                class="form-control-custom" 
+                value="<%= currentUser ? currentUser.name : (customer.name || '') %>" 
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input 
+                type="email" 
+                name="email" 
+                class="form-control-custom" 
+                value="<%= currentUser ? currentUser.email : (customer.email || '') %>" 
+                required
+              >
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input 
+                type="text" 
+                name="phone" 
+                class="form-control-custom" 
+                placeholder="+91 98765 43210" 
+                value="<%= currentUser ? currentUser.phone : (customer.phone || '') %>" 
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label>PIN / Postal Code *</label>
+              <input 
+                type="text" 
+                name="postalCode" 
+                class="form-control-custom" 
+                placeholder="411033" 
+                value="<%= currentUser && currentUser.address ? currentUser.address.postalCode : (customer.address ? customer.address.postalCode : '') %>" 
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Street Address / Apartment *</label>
+            <input 
+              type="text" 
+              name="street" 
+              class="form-control-custom" 
+              placeholder="Flat 402, Lotus Residency, MG Road" 
+              value="<%= currentUser && currentUser.address ? currentUser.address.street : (customer.address ? customer.address.street : '') %>" 
+              required
+            >
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>City *</label>
+              <input 
+                type="text" 
+                name="city" 
+                class="form-control-custom" 
+                placeholder="Pune" 
+                value="<%= currentUser && currentUser.address ? currentUser.address.city : (customer.address ? customer.address.city : '') %>" 
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label>State *</label>
+              <input 
+                type="text" 
+                name="state" 
+                class="form-control-custom" 
+                placeholder="Maharashtra" 
+                value="<%= currentUser && currentUser.address ? currentUser.address.state : (customer.address ? customer.address.state : 'Maharashtra') %>" 
+                required
+              >
+            </div>
+          </div>
+
+          <h3 style="margin-top: 28px;">2. Payment Method</h3>
+          <div class="notice">
+            <strong>Demo Checkout Mode:</strong> No real money or card details are charged. Select your preferred simulated payment method below.
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+            <label style="display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; background: #fafafa;">
+              <input type="radio" name="paymentMode" value="Cash on Delivery" checked>
+              <div>
+                <strong>Cash on Delivery (COD)</strong>
+                <div style="font-size: 12px; color: var(--muted);">Pay in cash or UPI upon package handover</div>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; background: #fafafa;">
+              <input type="radio" name="paymentMode" value="UPI (Demo)">
+              <div>
+                <strong>UPI (Demo)</strong>
+                <div style="font-size: 12px; color: var(--muted);">Instant mock payment via Google Pay / PhonePe</div>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; background: #fafafa;">
+              <input type="radio" name="paymentMode" value="Card (Demo)">
+              <div>
+                <strong>Credit / Debit Card (Demo)</strong>
+                <div style="font-size: 12px; color: var(--muted);">Simulated Visa / Mastercard checkout</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Order Summary & Confirm -->
+        <div class="panel" style="height: fit-content;">
+          <h3>Order review (<%= cart.totalCount %> items)</h3>
+
+          <div style="max-height: 240px; overflow-y: auto; margin-bottom: 16px;">
+            <% cart.items.forEach(item => { %>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f2f2f2; font-size: 13px;">
+                <div>
+                  <strong><%= item.product.emoji %> <%= item.product.name %></strong>
+                  <div style="color: var(--muted); font-size: 11px;">Qty: <%= item.quantity %> × <%= formatMoney(item.price) %></div>
+                </div>
+                <strong><%= formatMoney(item.lineTotal) %></strong>
+              </div>
+            <% }) %>
+          </div>
+
+          <div class="summaryline">
+            <span>Items Subtotal</span>
+            <span><%= formatMoney(cart.subtotal) %></span>
+          </div>
+
+          <div class="summaryline">
+            <span>Shipping</span>
+            <span><%= cart.shippingFee === 0 ? '<strong style="color:var(--green)">FREE</strong>' : formatMoney(cart.shippingFee) %></span>
+          </div>
+
+          <div class="summaryline">
+            <span>Taxes</span>
+            <span>Included</span>
+          </div>
+
+          <div class="summaryline total">
+            <span>Amount to Pay</span>
+            <span style="color: var(--orange);"><%= formatMoney(cart.totalAmount) %></span>
+          </div>
+
+          <button type="submit" class="primary full" style="margin-top: 20px; font-size: 16px; padding: 14px;">
+            Place Order <span>→</span>
+          </button>
+        </div>
+      </div>
+    </form>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

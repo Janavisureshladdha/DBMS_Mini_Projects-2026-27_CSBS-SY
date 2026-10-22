@@ -1,0 +1,97 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <div class="eyebrow">Explore the catalog</div>
+    <div class="section-head" style="margin-top: 7px;">
+      <div>
+        <h2>All products</h2>
+        <p>Showing <%= products.length %> of <%= totalProductsCount %> products</p>
+      </div>
+      <a href="/products" class="secondary" style="text-decoration:none;">Reset filters</a>
+    </div>
+
+    <!-- Filter and Search Toolbar -->
+    <form action="/products" method="GET" class="toolbar">
+      <input 
+        name="search" 
+        id="productSearch" 
+        placeholder="Search product or brand..." 
+        value="<%= currentSearch %>"
+      >
+
+      <select name="category" onchange="this.form.submit()">
+        <option value="All" <%= selectedCategory === 'All' ? 'selected' : '' %>>All categories</option>
+        <% categories.forEach(cat => { %>
+          <option value="<%= cat.name %>" <%= selectedCategory === cat.name ? 'selected' : '' %>>
+            <%= cat.name %>
+          </option>
+        <% }) %>
+      </select>
+
+      <select name="sort" onchange="this.form.submit()">
+        <option value="featured" <%= currentSort === 'featured' ? 'selected' : '' %>>Sort: Featured</option>
+        <option value="low" <%= currentSort === 'low' ? 'selected' : '' %>>Price: Low to high</option>
+        <option value="high" <%= currentSort === 'high' ? 'selected' : '' %>>Price: High to low</option>
+        <option value="rating" <%= currentSort === 'rating' ? 'selected' : '' %>>Top rated</option>
+      </select>
+
+      <button type="submit" class="primary" style="padding: 10px 16px;">Filter</button>
+    </form>
+
+    <!-- Products Grid -->
+    <% if (products.length > 0) { %>
+      <div class="products">
+        <% products.forEach(p => { %>
+          <article class="product">
+            <a href="/products/<%= p._id %>" style="display: block; color: inherit;">
+              <div class="product-art">
+                <span><%= p.emoji %></span>
+                <% if (p.tag) { %>
+                  <span class="tag <%= p.tag === 'LOW STOCK' ? 'tag-low' : (p.tag === 'BESTSELLER' ? 'tag-best' : 'tag-trend') %>">
+                    <%= p.tag %>
+                  </span>
+                <% } %>
+              </div>
+            </a>
+            <div class="product-body">
+              <div class="category"><%= p.categoryName || (p.category ? p.category.name : 'STORE') %> · <%= p.brand %></div>
+              <a href="/products/<%= p._id %>" style="color: inherit;">
+                <h3><%= p.name %></h3>
+              </a>
+              <div class="rating">
+                ★ <%= p.rating.toFixed(1) %> 
+                <span style="color:#999; font-weight: normal;">(<%= p.numReviews || 0 %> reviews)</span>
+              </div>
+              <div class="product-bottom">
+                <span class="price"><%= formatMoney(p.price) %></span>
+                <% if (p.stock > 0) { %>
+                  <button class="addbtn" onclick="addToCart('<%= p._id %>')">
+                    ＋ Add
+                  </button>
+                <% } else { %>
+                  <span class="pill low">Out of Stock</span>
+                <% } %>
+              </div>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty panel">
+        <div class="emoji">🔎</div>
+        <h3>No products found</h3>
+        <p>Try a different keyword, clear your search, or select another category.</p>
+        <a href="/products" class="secondary" style="margin-top: 10px; display: inline-flex;">View all products</a>
+      </div>
+    <% } %>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

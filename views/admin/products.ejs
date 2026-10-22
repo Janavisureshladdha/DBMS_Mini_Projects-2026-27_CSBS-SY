@@ -1,0 +1,98 @@
+<%- include('../partials/head') %>
+<%- include('../partials/navbar') %>
+
+<div class="layout">
+  <%- include('../partials/sidebar') %>
+
+  <main class="main">
+    <%- include('../partials/messages') %>
+
+    <div class="eyebrow">Catalog Management</div>
+    <div class="section-head" style="margin-top: 7px;">
+      <div>
+        <h2>Manage Products (<%= products.length %>)</h2>
+        <p>Edit prices, update stock levels, or remove items</p>
+      </div>
+      <a href="/admin/products/add" class="primary" style="text-decoration:none;">
+        ＋ Add New Product
+      </a>
+    </div>
+
+    <div class="panel">
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Brand</th>
+              <th>Price (₹)</th>
+              <th>Stock</th>
+              <th>Rating</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% products.forEach(p => { %>
+              <tr>
+                <td><code>PRD-<%= p.productId || p._id.toString().slice(-4).toUpperCase() %></code></td>
+                <td>
+                  <span style="font-size: 18px; margin-right: 4px;"><%= p.emoji %></span>
+                  <strong>
+                    <a href="/products/<%= p._id %>" target="_blank" style="color: inherit;">
+                      <%= p.name %>
+                    </a>
+                  </strong>
+                  <% if (p.featured) { %>
+                    <span class="pill" style="font-size: 9px; padding: 2px 6px; margin-left: 4px;">FEATURED</span>
+                  <% } %>
+                </td>
+                <td><%= p.categoryName || (p.category ? p.category.name : 'Unassigned') %></td>
+                <td><%= p.brand %></td>
+                <td>
+                  <form action="/admin/products/quick-update/<%= p._id %>" method="POST" style="display: inline-flex; align-items: center; gap: 4px;">
+                    <input 
+                      type="number" 
+                      name="price" 
+                      value="<%= p.price %>" 
+                      style="width: 80px; padding: 4px 8px; border: 1px solid #ddd; border-radius: 6px; font-weight: 700;"
+                    >
+                    <button type="submit" class="secondary" style="padding: 4px 6px; font-size: 11px;" title="Save price">✓</button>
+                  </form>
+                </td>
+                <td>
+                  <form action="/admin/products/quick-update/<%= p._id %>" method="POST" style="display: inline-flex; align-items: center; gap: 4px;">
+                    <input 
+                      type="number" 
+                      name="stock" 
+                      value="<%= p.stock %>" 
+                      style="width: 65px; padding: 4px 8px; border: 1px solid <%= p.stock < 10 ? 'var(--red)' : '#ddd' %>; border-radius: 6px; font-weight: 700; color: <%= p.stock < 10 ? 'var(--red)' : 'inherit' %>;"
+                    >
+                    <button type="submit" class="secondary" style="padding: 4px 6px; font-size: 11px;" title="Save stock">✓</button>
+                  </form>
+                </td>
+                <td>★ <%= p.rating.toFixed(1) %> (<%= p.numReviews %>)</td>
+                <td>
+                  <div style="display: flex; gap: 6px;">
+                    <a href="/admin/products/edit/<%= p._id %>" class="secondary" style="padding: 6px 10px; font-size: 12px; text-decoration:none;">
+                      Edit
+                    </a>
+                    <form action="/admin/products/delete/<%= p._id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete <%= p.name %>?');">
+                      <button type="submit" class="danger" style="padding: 6px 10px; font-size: 12px;">
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

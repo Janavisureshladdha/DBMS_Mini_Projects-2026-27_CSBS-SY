@@ -1,0 +1,63 @@
+<header class="topbar">
+  <a href="/" class="brand">
+    orange<span>cart.</span>
+  </a>
+
+  <div class="search">
+    <span class="glass">⌕</span>
+    <input 
+      id="globalSearch" 
+      type="search" 
+      placeholder="Search products, brands and categories..." 
+      value="<%= typeof currentSearch !== 'undefined' ? currentSearch : '' %>"
+      aria-label="Search products"
+    >
+  </div>
+
+  <div class="top-actions">
+    <a href="/orders" class="iconbtn" title="Your Orders">
+      <span>♡</span> <span class="labelhide">Orders</span>
+    </a>
+
+    <a href="/cart" class="iconbtn" title="Shopping Cart">
+      <span>🛒</span> <span class="labelhide">Cart</span>
+      <span class="count" id="cartCount"><%= cartCount || 0 %></span>
+    </a>
+
+    <% if (currentUser) { %>
+      <div class="user-menu">
+        <button class="iconbtn" id="userMenuBtn" onclick="toggleUserDropdown()">
+          <span>👤</span> <span class="labelhide"><%= currentUser.name.split(' ')[0] %></span>
+          <span style="font-size: 10px; margin-left: 2px;">▼</span>
+        </button>
+        <div class="dropdown-menu-custom" id="userDropdownMenu">
+          <div style="padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: 11px; color: var(--muted);">
+            Signed in as<br><strong style="color: var(--ink); font-size: 13px;"><%= currentUser.name %></strong>
+            <% if (currentUser.role === 'admin') { %>
+              <div class="pill pending" style="margin-top: 4px; font-size: 10px; padding: 2px 6px;">ADMINISTRATOR</div>
+            <% } %>
+          </div>
+          <a href="/auth/profile" class="dropdown-item-custom">
+            <span>⚙️</span> Profile & Address
+          </a>
+          <a href="/orders" class="dropdown-item-custom">
+            <span>📦</span> Order History
+          </a>
+          <% if (currentUser.role === 'admin') { %>
+            <a href="/admin" class="dropdown-item-custom" style="color: var(--orange-dark); font-weight: 700;">
+              <span>▥</span> Admin Dashboard
+            </a>
+          <% } %>
+          <div style="border-top: 1px solid var(--line); margin: 4px 0;"></div>
+          <a href="/auth/logout" class="dropdown-item-custom" style="color: var(--red);">
+            <span>🚪</span> Sign Out
+          </a>
+        </div>
+      </div>
+    <% } else { %>
+      <a href="/auth/login" class="primary" style="padding: 8px 14px; font-size: 13px; text-decoration: none;">
+        <span>Sign In</span>
+      </a>
+    <% } %>
+  </div>
+</header>

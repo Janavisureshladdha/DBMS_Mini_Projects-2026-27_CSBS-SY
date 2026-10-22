@@ -1,0 +1,92 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <div style="max-width: 460px; margin: 40px auto;">
+      <div class="panel" style="padding: 32px;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div style="font-size: 42px; margin-bottom: 8px;">🍊</div>
+          <h2 style="margin: 0 0 6px; font-size: 24px; font-weight: 850;">Welcome back</h2>
+          <p style="color: var(--muted); font-size: 14px; margin: 0;">Sign in to your OrangeCart account</p>
+        </div>
+
+        <form action="/auth/login" method="POST">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input 
+              type="email" 
+              name="email" 
+              id="loginEmail" 
+              class="form-control-custom" 
+              placeholder="customer@example.com" 
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <input 
+              type="password" 
+              name="password" 
+              id="loginPassword" 
+              class="form-control-custom" 
+              placeholder="••••••••" 
+              required
+            >
+          </div>
+
+          <button type="submit" class="primary full" style="padding: 13px; font-size: 15px;">
+            Sign In
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; font-size: 13.5px; color: var(--muted);">
+          Don't have an account? <a href="/auth/register" class="textlink">Create one</a>
+        </div>
+
+        <!-- Quick Demo Credentials Box -->
+        <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line);">
+          <div style="font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 10px;">
+            Quick Demo Logins (Click to autofill)
+          </div>
+          <div style="display: flex; gap: 8px; flex-direction: column;">
+            <button 
+              type="button" 
+              class="secondary" 
+              style="width: 100%; justify-content: space-between; font-size: 13px;"
+              onclick="fillDemo('customer@example.com', 'password123')"
+            >
+              <span>👤 <strong>Demo Customer</strong> (customer@example.com)</span>
+              <span style="color: var(--orange-dark); font-weight: 700;">Fill →</span>
+            </button>
+
+            <button 
+              type="button" 
+              class="secondary" 
+              style="width: 100%; justify-content: space-between; font-size: 13px;"
+              onclick="fillDemo('admin@orangecart.com', 'admin123')"
+            >
+              <span>👑 <strong>Administrator</strong> (admin@orangecart.com)</span>
+              <span style="color: var(--orange-dark); font-weight: 700;">Fill →</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function fillDemo(email, password) {
+  document.getElementById('loginEmail').value = email;
+  document.getElementById('loginPassword').value = password;
+}
+</script>
+
+<%- include('partials/footer') %>

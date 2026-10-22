@@ -1,0 +1,86 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <div style="max-width: 580px; margin: 30px auto;">
+      <div class="panel" style="padding: 36px;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div style="font-size: 42px; margin-bottom: 8px;">🍊</div>
+          <h2 style="margin: 0 0 6px; font-size: 24px; font-weight: 850;">Create Account</h2>
+          <p style="color: var(--muted); font-size: 14px; margin: 0;">Join OrangeCart for fast checkout and order tracking</p>
+        </div>
+
+        <form action="/auth/register" method="POST">
+          <div class="two-col">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" name="name" class="form-control-custom" placeholder="John Doe" required>
+            </div>
+
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" name="email" class="form-control-custom" placeholder="john@example.com" required>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Password (min 6 chars) *</label>
+              <input type="password" name="password" class="form-control-custom" placeholder="••••••••" minlength="6" required>
+            </div>
+
+            <div class="form-group">
+              <label>Confirm Password *</label>
+              <input type="password" name="confirmPassword" class="form-control-custom" placeholder="••••••••" minlength="6" required>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="text" name="phone" class="form-control-custom" placeholder="+91 98765 43210">
+            </div>
+
+            <div class="form-group">
+              <label>PIN / Postal Code</label>
+              <input type="text" name="postalCode" class="form-control-custom" placeholder="411033">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Street Address</label>
+            <input type="text" name="street" class="form-control-custom" placeholder="123 Park Street, Apartment 4B">
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" name="city" class="form-control-custom" placeholder="Pune">
+            </div>
+
+            <div class="form-group">
+              <label>State</label>
+              <input type="text" name="state" class="form-control-custom" placeholder="Maharashtra" value="Maharashtra">
+            </div>
+          </div>
+
+          <button type="submit" class="primary full" style="padding: 13px; font-size: 15px; margin-top: 10px;">
+            Create My OrangeCart Account
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; font-size: 13.5px; color: var(--muted);">
+          Already have an account? <a href="/auth/login" class="textlink">Sign in here</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>
