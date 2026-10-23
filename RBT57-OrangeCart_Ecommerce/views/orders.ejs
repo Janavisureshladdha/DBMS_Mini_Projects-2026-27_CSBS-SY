@@ -1,0 +1,79 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <div class="eyebrow">Purchase history</div>
+    <div class="section-head" style="margin-top: 7px;">
+      <div>
+        <h2>Your orders</h2>
+        <p>Track your recent purchases and delivery status</p>
+      </div>
+      <a href="/products" class="primary" style="text-decoration:none;">Shop now</a>
+    </div>
+
+    <% if (orders && orders.length > 0) { %>
+      <div class="panel">
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Payment mode</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(o => { %>
+                <tr>
+                  <td>
+                    <strong style="color: var(--orange);"><%= o.orderId %></strong>
+                  </td>
+                  <td><%= formatDate(o.createdAt) %></td>
+                  <td>
+                    <%= o.items.reduce((s, i) => s + i.quantity, 0) %> item(s)
+                    <span style="font-size: 11px; color: var(--muted); display: block;">
+                      <%= o.items.map(i => i.name).slice(0, 2).join(', ') %><%= o.items.length > 2 ? '...' : '' %>
+                    </span>
+                  </td>
+                  <td><strong><%= formatMoney(o.totalAmount) %></strong></td>
+                  <td><%= o.payment.paymentMode %></td>
+                  <td>
+                    <span class="pill <%= o.orderStatus === 'Processing' ? 'pending' : (o.orderStatus === 'Shipped' ? 'shipped' : (o.orderStatus === 'Delivered' ? '' : 'cancelled')) %>">
+                      <%= o.orderStatus %>
+                    </span>
+                  </td>
+                  <td>
+                    <a href="/orders/<%= o._id %>" class="secondary" style="padding: 6px 12px; font-size: 12px; text-decoration:none;">
+                      View Details
+                    </a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="panel empty">
+        <div class="emoji">📦</div>
+        <h3>No orders yet</h3>
+        <p>When you check out, your purchases will appear here.</p>
+        <a href="/products" class="primary" style="margin-top: 14px; text-decoration: none; display: inline-flex;">
+          Explore products
+        </a>
+      </div>
+    <% } %>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,51 @@
+<aside class="sidebar">
+  <div class="nav-label">STORE</div>
+  
+  <a href="/" class="navbtn <%= page === 'home' ? 'active' : '' %>">
+    <span class="ni">⌂</span>
+    <span>Home</span>
+  </a>
+
+  <a href="/products" class="navbtn <%= page === 'products' ? 'active' : '' %>">
+    <span class="ni">▦</span>
+    <span>Products</span>
+  </a>
+
+  <a href="/cart" class="navbtn <%= page === 'cart' ? 'active' : '' %>">
+    <span class="ni">🛒</span>
+    <span>Shopping Cart</span>
+    <span class="count" id="sideCartCount"><%= cartCount || 0 %></span>
+  </a>
+
+  <a href="/orders" class="navbtn <%= page === 'orders' ? 'active' : '' %>">
+    <span class="ni">▤</span>
+    <span>Orders</span>
+  </a>
+
+  <div class="nav-label" style="margin-top: 20px;">MANAGEMENT</div>
+  
+  <a href="/admin" class="navbtn <%= (typeof page !== 'undefined' && page.startsWith('admin')) ? 'active' : '' %>">
+    <span class="ni">▥</span>
+    <span>Admin Dashboard</span>
+  </a>
+
+  <% if (currentUser && currentUser.role === 'admin') { %>
+    <a href="/admin/products" class="navbtn <%= page === 'admin-products' ? 'active' : '' %>" style="font-size: 13px; padding-left: 20px;">
+      <span class="ni">🛍️</span>
+      <span>Manage Catalog</span>
+    </a>
+    <a href="/admin/orders" class="navbtn <%= page === 'admin-orders' ? 'active' : '' %>" style="font-size: 13px; padding-left: 20px;">
+      <span class="ni">📦</span>
+      <span>Manage Orders</span>
+    </a>
+    <a href="/admin/categories" class="navbtn <%= page === 'admin-categories' ? 'active' : '' %>" style="font-size: 13px; padding-left: 20px;">
+      <span class="ni">🏷️</span>
+      <span>Categories</span>
+    </a>
+  <% } %>
+
+  <div class="sidebar-note">
+    <strong>OrangeCart Store</strong><br><br>
+    Full-stack e-commerce marketplace powered by Node.js, Express, and MongoDB Mongoose.
+  </div>
+</aside>

@@ -1,0 +1,13 @@
+<% if (typeof success !== 'undefined' && success) { %>
+  <div class="green-notice" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <div><strong>✓</strong> <%= success %></div>
+    <button onclick="this.parentElement.remove()" style="background: none; border: 0; cursor: pointer; font-size: 16px; color: #176847;">✕</button>
+  </div>
+<% } %>
+
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="red-notice" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <div><strong>⚠</strong> <%= error %></div>
+    <button onclick="this.parentElement.remove()" style="background: none; border: 0; cursor: pointer; font-size: 16px; color: #9b1c1c;">✕</button>
+  </div>
+<% } %>

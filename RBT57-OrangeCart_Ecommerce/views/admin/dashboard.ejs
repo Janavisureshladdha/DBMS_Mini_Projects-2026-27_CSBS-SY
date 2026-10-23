@@ -1,0 +1,182 @@
+<%- include('../partials/head') %>
+<%- include('../partials/navbar') %>
+
+<div class="layout">
+  <%- include('../partials/sidebar') %>
+
+  <main class="main">
+    <%- include('../partials/messages') %>
+
+    <div class="eyebrow">Store overview</div>
+    <div class="section-head" style="margin-top: 7px;">
+      <div>
+        <h2>Admin dashboard</h2>
+        <p>Monitor catalog, live orders, and stock levels in real time</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <a href="/admin/products/add" class="primary" style="text-decoration:none;">
+          ＋ Add product
+        </a>
+      </div>
+    </div>
+
+    <!-- MongoDB Stats Row -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-top">
+          <span>Total products</span>
+          <span class="stat-icon">▦</span>
+        </div>
+        <strong><%= stats.totalProducts %></strong>
+        <small>Active in catalog</small>
+      </div>
+
+      <div class="stat">
+        <div class="stat-top">
+          <span>Total customers</span>
+          <span class="stat-icon">👥</span>
+        </div>
+        <strong><%= stats.totalCustomers %></strong>
+        <small>Registered accounts</small>
+      </div>
+
+      <div class="stat">
+        <div class="stat-top">
+          <span>Total orders</span>
+          <span class="stat-icon">▤</span>
+        </div>
+        <strong><%= stats.totalOrders %></strong>
+        <small>Processed orders</small>
+      </div>
+
+      <div class="stat">
+        <div class="stat-top">
+          <span>Total revenue</span>
+          <span class="stat-icon">₹</span>
+        </div>
+        <strong><%= formatMoney(stats.totalRevenue) %></strong>
+        <small>MongoDB aggregated revenue</small>
+      </div>
+    </div>
+
+    <!-- Low Stock Alert & Recent Orders -->
+    <div class="two-col">
+      <!-- Low Stock Table -->
+      <div class="panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <h3 style="margin: 0;">Low Stock Alert (<%= stats.lowStockCount %>)</h3>
+          <span style="font-size: 12px; color: var(--red); font-weight: 700;">Stock &lt; 10 units</span>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (lowStockProducts.length > 0) { %>
+                <% lowStockProducts.forEach(p => { %>
+                  <tr>
+                    <td>
+                      <span><%= p.emoji %></span>
+                      <strong><%= p.name %></strong>
+                    </td>
+                    <td><%= p.categoryName || (p.category ? p.category.name : '') %></td>
+                    <td><span class="pill low"><%= p.stock %> units</span></td>
+                    <td>
+                      <a href="/admin/products/edit/<%= p._id %>" class="secondary" style="padding: 4px 10px; font-size: 11px; text-decoration:none;">
+                        Restock
+                      </a>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="4" style="text-align: center; color: var(--muted); padding: 20px;">
+                    All products have sufficient stock levels!
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Orders Table -->
+      <div class="panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <h3 style="margin: 0;">Recent Orders</h3>
+          <a href="/admin/orders" class="textlink" style="font-size: 13px;">View all orders →</a>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (recentOrders.length > 0) { %>
+                <% recentOrders.forEach(o => { %>
+                  <tr>
+                    <td>
+                      <a href="/orders/<%= o._id %>" style="color: var(--orange); font-weight: 700;">
+                        <%= o.orderId %>
+                      </a>
+                    </td>
+                    <td><%= o.customer ? o.customer.name : o.shippingAddress.fullName %></td>
+                    <td><strong><%= formatMoney(o.totalAmount) %></strong></td>
+                    <td>
+                      <span class="pill <%= o.orderStatus === 'Processing' ? 'pending' : (o.orderStatus === 'Shipped' ? 'shipped' : (o.orderStatus === 'Delivered' ? '' : 'cancelled')) %>">
+                        <%= o.orderStatus %>
+                      </span>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="4" style="text-align: center; color: var(--muted); padding: 20px;">
+                    No recent orders.
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 10px;">
+      <a href="/admin/products" class="panel" style="text-decoration:none; margin: 0; padding: 20px; transition: transform 0.2s;">
+        <div style="font-size: 28px; margin-bottom: 6px;">🛍️</div>
+        <strong style="color: var(--ink); font-size: 16px;">Manage Product Catalog</strong>
+        <p style="color: var(--muted); font-size: 13px; margin: 4px 0 0;">Add, edit prices, restock, or remove catalog products.</p>
+      </a>
+
+      <a href="/admin/orders" class="panel" style="text-decoration:none; margin: 0; padding: 20px; transition: transform 0.2s;">
+        <div style="font-size: 28px; margin-bottom: 6px;">📦</div>
+        <strong style="color: var(--ink); font-size: 16px;">Manage Customer Orders</strong>
+        <p style="color: var(--muted); font-size: 13px; margin: 4px 0 0;">Track shipments and update order statuses.</p>
+      </a>
+
+      <a href="/admin/categories" class="panel" style="text-decoration:none; margin: 0; padding: 20px; transition: transform 0.2s;">
+        <div style="font-size: 28px; margin-bottom: 6px;">🏷️</div>
+        <strong style="color: var(--ink); font-size: 16px;">Manage Categories</strong>
+        <p style="color: var(--muted); font-size: 13px; margin: 4px 0 0;">Create new departments and category icons.</p>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

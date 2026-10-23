@@ -1,0 +1,236 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <!-- Breadcrumb -->
+    <div style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">
+      <a href="/" style="color: var(--muted);">Home</a> / 
+      <a href="/products" style="color: var(--muted);">Products</a> / 
+      <a href="/products?category=<%= encodeURIComponent(product.categoryName || '') %>" style="color: var(--muted);"><%= product.categoryName %></a> / 
+      <span style="color: var(--ink); font-weight: 600;"><%= product.name %></span>
+    </div>
+
+    <!-- Product Detail Layout -->
+    <div class="detail-layout">
+      <!-- Art & Media -->
+      <div class="detail-gallery">
+        <div class="detail-main-img">
+          <span><%= product.emoji %></span>
+        </div>
+      </div>
+
+      <!-- Info & Purchase Action -->
+      <div>
+        <div class="category" style="font-size: 13px;">
+          <%= product.categoryName %> · <%= product.brand %>
+        </div>
+        
+        <h1 style="font-size: 28px; font-weight: 850; margin: 8px 0 12px; letter-spacing: -0.6px;">
+          <%= product.name %>
+        </h1>
+
+        <!-- Rating summary -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+          <div class="rating" style="font-size: 15px;">
+            ★ <%= product.rating.toFixed(1) %>
+          </div>
+          <span style="color: #999; font-size: 13px;">•</span>
+          <span style="color: var(--muted); font-size: 13px;"><%= product.numReviews %> customer reviews</span>
+          <% if (product.tag) { %>
+            <span class="tag <%= product.tag === 'LOW STOCK' ? 'tag-low' : (product.tag === 'BESTSELLER' ? 'tag-best' : 'tag-trend') %>" style="position: static;">
+              <%= product.tag %>
+            </span>
+          <% } %>
+        </div>
+
+        <!-- Price -->
+        <div style="font-size: 32px; font-weight: 900; color: var(--ink); margin-bottom: 16px;">
+          <%= formatMoney(product.price) %>
+          <span style="font-size: 13px; font-weight: normal; color: var(--muted); margin-left: 8px;">Taxes included</span>
+        </div>
+
+        <p style="color: #555; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+          <%= product.description %>
+        </p>
+
+        <!-- Product Specs Grid (from ER diagram attributes) -->
+        <div class="detail-specs">
+          <div class="spec-item">
+            <span>Brand</span>
+            <strong><%= product.brand %></strong>
+          </div>
+          <div class="spec-item">
+            <span>Product Type</span>
+            <strong><%= product.type || 'Standard' %></strong>
+          </div>
+          <div class="spec-item">
+            <span>Color</span>
+            <strong><%= product.color || 'Standard' %></strong>
+          </div>
+          <div class="spec-item">
+            <span>Release Year</span>
+            <strong><%= product.year || 2026 %></strong>
+          </div>
+          <div class="spec-item">
+            <span>Stock Status</span>
+            <% if (product.stock > 10) { %>
+              <strong style="color: var(--green);">In Stock (<%= product.stock %> units)</strong>
+            <% } else if (product.stock > 0) { %>
+              <strong style="color: var(--red);">Only <%= product.stock %> left in stock!</strong>
+            <% } else { %>
+              <strong style="color: var(--red);">Out of Stock</strong>
+            <% } %>
+          </div>
+          <div class="spec-item">
+            <span>Product Code</span>
+            <strong>PRD-<%= product.productId || product._id.toString().slice(-4).toUpperCase() %></strong>
+          </div>
+        </div>
+
+        <!-- Add to Cart Form -->
+        <% if (product.stock > 0) { %>
+          <form action="/cart/add" method="POST" style="display: flex; gap: 14px; align-items: center; margin-top: 24px;">
+            <input type="hidden" name="productId" value="<%= product._id %>">
+            <div style="display: flex; flex-direction: column;">
+              <label style="font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 4px;">QUANTITY</label>
+              <select name="quantity" class="field" style="padding: 10px 14px; min-width: 80px;">
+                <% for (let i = 1; i <= Math.min(product.stock, 5); i++) { %>
+                  <option value="<%= i %>"><%= i %></option>
+                <% } %>
+              </select>
+            </div>
+            <button type="submit" class="primary" style="flex: 1; justify-content: center; padding: 13px; margin-top: 18px;">
+              <span>🛒 Add to Shopping Cart</span>
+            </button>
+          </form>
+        <% } else { %>
+          <div class="notice" style="margin-top: 24px;">
+            This item is currently sold out. Check back soon for restock!
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="panel" style="margin-top: 32px;">
+      <div class="section-head" style="margin: 0 0 20px;">
+        <div>
+          <h2 style="font-size: 20px;">Customer Reviews & Ratings</h2>
+          <p>Verified feedback from shoppers</p>
+        </div>
+      </div>
+
+      <div class="two-col" style="gap: 32px;">
+        <!-- Reviews List -->
+        <div>
+          <% if (reviews.length > 0) { %>
+            <% reviews.forEach(r => { %>
+              <div class="review-card">
+                <div class="review-header">
+                  <strong><%= r.customerName %></strong>
+                  <span style="font-size: 12px; color: var(--muted);"><%= formatDate(r.createdAt) %></span>
+                </div>
+                <div class="rating" style="margin-bottom: 6px;">
+                  <% for (let i = 1; i <= 5; i++) { %>
+                    <%= i <= r.rating ? '★' : '☆' %>
+                  <% } %>
+                  <span style="color: var(--ink); font-weight: 600; font-size: 12px; margin-left: 4px;"><%= r.rating %>/5</span>
+                </div>
+                <p style="font-size: 14px; color: #444; margin: 4px 0 0;"><%= r.comment %></p>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <div class="empty" style="padding: 30px;">
+              <div style="font-size: 32px;">💬</div>
+              <p>No reviews yet for this product. Be the first to review!</p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Add Review Form -->
+        <div style="background: #fafafa; border: 1px solid var(--line); border-radius: 14px; padding: 20px;">
+          <h3 style="font-size: 16px; margin: 0 0 12px;">Leave a Review</h3>
+          
+          <% if (currentUser) { %>
+            <form action="/reviews" method="POST">
+              <input type="hidden" name="productId" value="<%= product._id %>">
+              <div class="form-group">
+                <label>Your Rating</label>
+                <select name="rating" class="form-control-custom" required>
+                  <option value="5">★★★★★ (5 - Excellent)</option>
+                  <option value="4">★★★★☆ (4 - Very Good)</option>
+                  <option value="3">★★★☆☆ (3 - Average)</option>
+                  <option value="2">★★☆☆☆ (2 - Below Average)</option>
+                  <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Your Feedback</label>
+                <textarea 
+                  name="comment" 
+                  rows="3" 
+                  class="form-control-custom" 
+                  placeholder="Tell us what you liked or how this product performs..." 
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="primary" style="width: 100%; justify-content: center;">
+                Submit Review
+              </button>
+            </form>
+          <% } else { %>
+            <p style="font-size: 13.5px; color: var(--muted); margin-bottom: 16px;">
+              Please log in to your OrangeCart account to share your verified review.
+            </p>
+            <a href="/auth/login" class="secondary" style="width: 100%; justify-content: center;">
+              Log in to review
+            </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <% if (relatedProducts.length > 0) { %>
+      <div class="section-head" style="margin-top: 40px;">
+        <div>
+          <h2>You may also like</h2>
+          <p>More from <%= product.categoryName %></p>
+        </div>
+      </div>
+      <div class="products">
+        <% relatedProducts.forEach(p => { %>
+          <article class="product">
+            <a href="/products/<%= p._id %>" style="display: block; color: inherit;">
+              <div class="product-art">
+                <span><%= p.emoji %></span>
+              </div>
+            </a>
+            <div class="product-body">
+              <div class="category"><%= p.brand %></div>
+              <a href="/products/<%= p._id %>" style="color: inherit;">
+                <h3><%= p.name %></h3>
+              </a>
+              <div class="product-bottom">
+                <span class="price"><%= formatMoney(p.price) %></span>
+                <% if (p.stock > 0) { %>
+                  <button class="addbtn" onclick="addToCart('<%= p._id %>')">＋ Add</button>
+                <% } %>
+              </div>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

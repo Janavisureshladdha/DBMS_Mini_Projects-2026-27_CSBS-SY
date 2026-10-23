@@ -1,0 +1,188 @@
+<%- include('../partials/head') %>
+<%- include('../partials/navbar') %>
+
+<div class="layout">
+  <%- include('../partials/sidebar') %>
+
+  <main class="main">
+    <%- include('../partials/messages') %>
+
+    <div class="eyebrow"><%= product ? 'Update Catalog' : 'New Catalog Item' %></div>
+    <div class="section-head" style="margin-top: 7px;">
+      <div>
+        <h2><%= product ? `Edit: ${product.name}` : 'Add New Product' %></h2>
+        <p><%= product ? 'Update product information, price, or inventory' : 'Enter product details to publish to the OrangeCart catalog' %></p>
+      </div>
+      <a href="/admin/products" class="secondary" style="text-decoration:none;">← Back to products</a>
+    </div>
+
+    <div class="panel" style="max-width: 800px;">
+      <form action="<%= product ? `/admin/products/edit/${product._id}` : '/admin/products/add' %>" method="POST">
+        <div class="two-col">
+          <div class="form-group">
+            <label>Product Name *</label>
+            <input 
+              type="text" 
+              name="name" 
+              class="form-control-custom" 
+              placeholder="e.g. Wireless ANC Headphones" 
+              value="<%= product ? product.name : '' %>" 
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Category *</label>
+            <select name="category" class="form-control-custom" required>
+              <option value="">Select Category</option>
+              <% categories.forEach(cat => { %>
+                <option 
+                  value="<%= cat._id %>" 
+                  <%= product && (product.category && product.category._id ? product.category._id.toString() : product.category.toString()) === cat._id.toString() ? 'selected' : '' %>
+                >
+                  <%= cat.name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="form-group">
+            <label>Brand *</label>
+            <input 
+              type="text" 
+              name="brand" 
+              class="form-control-custom" 
+              placeholder="e.g. SoundPeak" 
+              value="<%= product ? product.brand : '' %>" 
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Product Type</label>
+            <input 
+              type="text" 
+              name="type" 
+              class="form-control-custom" 
+              placeholder="e.g. Over-Ear Wireless" 
+              value="<%= product ? product.type : '' %>"
+            >
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="form-group">
+            <label>Color</label>
+            <input 
+              type="text" 
+              name="color" 
+              class="form-control-custom" 
+              placeholder="e.g. Matte Black" 
+              value="<%= product ? product.color : 'Black' %>"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Release Year</label>
+            <input 
+              type="number" 
+              name="year" 
+              class="form-control-custom" 
+              placeholder="2026" 
+              value="<%= product ? product.year : 2026 %>"
+            >
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="form-group">
+            <label>Price (₹ INR) *</label>
+            <input 
+              type="number" 
+              name="price" 
+              class="form-control-custom" 
+              placeholder="1999" 
+              min="1" 
+              value="<%= product ? product.price : '' %>" 
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Stock Quantity *</label>
+            <input 
+              type="number" 
+              name="stock" 
+              class="form-control-custom" 
+              placeholder="15" 
+              min="0" 
+              value="<%= product ? product.stock : 10 %>" 
+              required
+            >
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="form-group">
+            <label>Emoji Symbol / Illustration</label>
+            <input 
+              type="text" 
+              name="emoji" 
+              class="form-control-custom" 
+              placeholder="🎧" 
+              value="<%= product ? product.emoji : '🛍️' %>"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Badge Tag</label>
+            <select name="tag" class="form-control-custom">
+              <option value="" <%= product && product.tag === '' ? 'selected' : '' %>>None</option>
+              <option value="BESTSELLER" <%= product && product.tag === 'BESTSELLER' ? 'selected' : '' %>>BESTSELLER</option>
+              <option value="TRENDING" <%= product && product.tag === 'TRENDING' ? 'selected' : '' %>>TRENDING</option>
+              <option value="POPULAR" <%= product && product.tag === 'POPULAR' ? 'selected' : '' %>>POPULAR</option>
+              <option value="VALUE PICK" <%= product && product.tag === 'VALUE PICK' ? 'selected' : '' %>>VALUE PICK</option>
+              <option value="NEW" <%= product && product.tag === 'NEW' ? 'selected' : '' %>>NEW</option>
+              <option value="LOW STOCK" <%= product && product.tag === 'LOW STOCK' ? 'selected' : '' %>>LOW STOCK</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea 
+            name="description" 
+            rows="4" 
+            class="form-control-custom" 
+            placeholder="Detailed product features, specifications, and warranty details..."
+          ><%= product ? product.description : '' %></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 10px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input 
+              type="checkbox" 
+              name="featured" 
+              <%= product && product.featured ? 'checked' : '' %>
+            >
+            <span>Feature this product in Home page showcase</span>
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="submit" class="primary" style="padding: 12px 24px;">
+            <%= product ? 'Save Product Changes' : 'Publish Product to Catalog' %>
+          </button>
+          <a href="/admin/products" class="secondary" style="text-decoration:none; padding: 12px 20px;">
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

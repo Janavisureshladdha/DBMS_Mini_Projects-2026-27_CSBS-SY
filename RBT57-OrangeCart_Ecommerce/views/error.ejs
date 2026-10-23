@@ -1,0 +1,21 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <div class="panel empty" style="max-width: 600px; margin: 40px auto; padding: 50px 30px;">
+      <div class="emoji"><%= typeof statusCode !== 'undefined' && statusCode === 404 ? '🔍' : '⚠️' %></div>
+      <h2 style="font-size: 26px; margin: 10px 0;"><%= typeof statusCode !== 'undefined' ? statusCode : 'Notice' %></h2>
+      <p style="color: var(--muted); font-size: 15px; margin-bottom: 24px;">
+        <%= typeof message !== 'undefined' ? message : 'Something went wrong.' %>
+      </p>
+      <a href="/" class="primary" style="text-decoration:none; display: inline-flex;">
+        Return to Homepage
+      </a>
+    </div>
+  </main>
+</div>
+
+<%- include('partials/footer') %>

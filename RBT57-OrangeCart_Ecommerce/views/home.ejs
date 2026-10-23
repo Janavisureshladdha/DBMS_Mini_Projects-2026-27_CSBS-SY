@@ -1,0 +1,136 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <!-- Hero Promotional Banner -->
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Your everyday marketplace</div>
+        <h1>Good finds.<br><span style="color:var(--orange)">Better prices.</span></h1>
+        <p>Discover useful tech, home essentials and everyday accessories — all in one place.</p>
+        <a href="/products" class="primary" style="text-decoration:none;">
+          <span>Explore products</span>
+          <span>→</span>
+        </a>
+      </div>
+      <div class="hero-art">
+        <div class="hero-circle">🛍️</div>
+        <div class="float-card">
+          ✦ <strong>Fresh picks</strong><br>
+          <span style="color:#777">Curated for you</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Store Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-top">
+          <span>Catalog products</span>
+          <span class="stat-icon">▦</span>
+        </div>
+        <strong><%= stats.totalProducts %></strong>
+        <small>Live in MongoDB catalog</small>
+      </div>
+
+      <div class="stat">
+        <div class="stat-top">
+          <span>Categories</span>
+          <span class="stat-icon">◈</span>
+        </div>
+        <strong><%= stats.totalCategories %></strong>
+        <small>Easy to browse</small>
+      </div>
+
+      <div class="stat">
+        <div class="stat-top">
+          <span>Orders placed</span>
+          <span class="stat-icon">▤</span>
+        </div>
+        <strong><%= stats.totalOrders %></strong>
+        <small>Stored & processed</small>
+      </div>
+
+      <div class="stat">
+        <div class="stat-top">
+          <span>Cart items</span>
+          <span class="stat-icon">🛒</span>
+        </div>
+        <strong id="homeCartStat"><%= cartCount || 0 %></strong>
+        <small>Ready for checkout</small>
+      </div>
+    </div>
+
+    <!-- Browse by Category -->
+    <div class="section-head" style="margin-top: 36px;">
+      <div>
+        <h2>Browse by Category</h2>
+        <p>Explore our curated collections</p>
+      </div>
+      <a href="/products" class="textlink">All products →</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 30px;">
+      <% categories.forEach(cat => { %>
+        <a href="/products?category=<%= encodeURIComponent(cat.name) %>" class="panel" style="padding: 16px; margin: 0; text-align: center; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 14px; transition: transform 0.2s, border-color 0.2s;">
+          <div style="font-size: 32px; margin-bottom: 6px;"><%= cat.icon || '📦' %></div>
+          <strong style="color: var(--ink); font-size: 14px;"><%= cat.name %></strong>
+        </a>
+      <% }) %>
+    </div>
+
+    <!-- Featured Products -->
+    <div class="section-head">
+      <div>
+        <h2>Popular right now</h2>
+        <p>Handpicked products from our catalog</p>
+      </div>
+      <a href="/products" class="textlink">View all →</a>
+    </div>
+
+    <div class="products">
+      <% featuredProducts.forEach(p => { %>
+        <article class="product">
+          <a href="/products/<%= p._id %>" style="display: block; color: inherit;">
+            <div class="product-art">
+              <span><%= p.emoji %></span>
+              <% if (p.tag) { %>
+                <span class="tag <%= p.tag === 'LOW STOCK' ? 'tag-low' : (p.tag === 'BESTSELLER' ? 'tag-best' : 'tag-trend') %>">
+                  <%= p.tag %>
+                </span>
+              <% } %>
+            </div>
+          </a>
+          <div class="product-body">
+            <div class="category"><%= p.categoryName || (p.category ? p.category.name : 'STORE') %> · <%= p.brand %></div>
+            <a href="/products/<%= p._id %>" style="color: inherit;">
+              <h3><%= p.name %></h3>
+            </a>
+            <div class="rating">
+              ★ <%= p.rating.toFixed(1) %> 
+              <span style="color:#999; font-weight: normal;">(<%= p.numReviews || 0 %> reviews)</span>
+            </div>
+            <div class="product-bottom">
+              <span class="price"><%= formatMoney(p.price) %></span>
+              <% if (p.stock > 0) { %>
+                <button class="addbtn" onclick="addToCart('<%= p._id %>')">
+                  ＋ Add
+                </button>
+              <% } else { %>
+                <span class="pill low">Out of Stock</span>
+              <% } %>
+            </div>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

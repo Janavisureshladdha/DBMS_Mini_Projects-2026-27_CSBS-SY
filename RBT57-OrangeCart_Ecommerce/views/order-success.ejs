@@ -1,0 +1,71 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main">
+    <%- include('partials/messages') %>
+
+    <div class="panel" style="max-width: 760px; margin: 20px auto; text-align: center; padding: 40px 30px;">
+      <div style="font-size: 64px; margin-bottom: 12px;">🎉</div>
+      <div class="eyebrow">Thank you for your order</div>
+      <h1 style="font-size: 28px; margin: 8px 0 16px; font-weight: 850;">Order Placed Successfully!</h1>
+      <p style="color: var(--muted); font-size: 15px; max-width: 500px; margin: 0 auto 24px;">
+        We've received your order and are getting it ready. A confirmation email has been logged in MongoDB for your account.
+      </p>
+
+      <div style="background: #fafafa; border: 1px solid var(--line); border-radius: 16px; padding: 24px; text-align: left; margin: 24px 0;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 750;">Order Reference</div>
+            <strong style="font-size: 18px; color: var(--orange);"><%= order.orderId %></strong>
+          </div>
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 750;">Status</div>
+            <span class="pill processing"><%= order.orderStatus %></span>
+          </div>
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 750;">Payment Mode</div>
+            <strong><%= order.payment.paymentMode %></strong>
+          </div>
+        </div>
+
+        <h4 style="margin: 0 0 10px; font-size: 14px;">Items Ordered</h4>
+        <% order.items.forEach(item => { %>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 13.5px;">
+            <div>
+              <span><%= item.emoji %></span>
+              <strong><%= item.name %></strong>
+              <span style="color: var(--muted); font-size: 12px;">× <%= item.quantity %></span>
+            </div>
+            <strong><%= formatMoney(item.price * item.quantity) %></strong>
+          </div>
+        <% }) %>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 16px; font-weight: 850;">
+          <span>Total Paid / Payable</span>
+          <span style="color: var(--ink);"><%= formatMoney(order.totalAmount) %></span>
+        </div>
+
+        <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted);">
+          <strong>Deliver to:</strong><br>
+          <%= order.shippingAddress.fullName %> (<%= order.shippingAddress.phone %>)<br>
+          <%= order.shippingAddress.street %>, <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.postalCode %>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+        <a href="/orders/<%= order._id %>" class="primary" style="text-decoration:none;">
+          View Order Details
+        </a>
+        <a href="/products" class="secondary" style="text-decoration:none;">
+          Continue Shopping
+        </a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>
